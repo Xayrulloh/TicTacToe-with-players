@@ -1,0 +1,90 @@
+body {
+    font-family: "Arial", sans-serif;
+    background-image: url(https://wallpaperaccess.com/full/2078988.jpg);
+    background-repeat: no-repeat;
+    background-size: 100%;
+}
+
+section {
+    text-align: center;
+    display: flex;
+
+}
+
+.center{
+    margin-top: 50px;
+    margin-left: 500px;
+}
+
+.game--title {
+    font-size: 30px;
+    margin: 10px auto;
+}
+
+.game--container {
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    width: 311px;
+    margin: 10px auto;
+    background-color: #11213a;
+    color: #04c0b2;
+}
+
+#cell {
+    font-family: "Permanent Marker", cursive;
+    width: 100px;
+    height: 100px;
+    box-shadow: 2px 2px 2px 2px #ecd7ba;
+    border: 2px solid #ecd7ba;
+    cursor: pointer;
+    line-height: 100px;
+    font-size: 60px;
+}
+
+.game--status {
+    font-size: 50px;
+    color: #d7a62f;
+    margin: 20px auto;
+}
+
+.game--time{
+    align-items: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.game--score{
+    align-items: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.players{
+    padding-left: 20px;
+}
+
+.players_list{
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.players_item{
+    display: flex;
+    margin-bottom: 20px;
+}
+
+img{
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+}
+
+#name {
+    margin-top: 40px;
+    margin-left: 15px;
+}
+
+.test{
+    text-align: left;
+}
