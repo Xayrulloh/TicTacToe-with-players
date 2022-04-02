@@ -36,24 +36,27 @@ app.post('/enter', upload.single('image'),
             res.status(200).json({userId: users.at(-1).userId, site: '/game'})
 
         } else {
-            res.status(200).json({userId: users.at(-1).userId, site: '/what'})
+            users.push({"username": username,"profileImg":image})
+            res.status(200).json({userId: users.at(-1).userId, site: '/game'})
         }
     }
 )
 
 app.post('/timeEnded', (req, res) => {
-    if (users[0].turn) {
-        users[1].score += 1
-        users[1].turn = true
-        users[0].turn = false
-    } else {
-        users[0].score += 1
-        users[0].turn = true
-        users[1].turn = false
+    if (started) {
+        if (users[0].turn) {
+            users[1].score += 1
+            users[1].turn = true
+            users[0].turn = false
+        } else {
+            users[0].score += 1
+            users[0].turn = true
+            users[1].turn = false
+        }
+    
+        board = ["","","","","","","","",""]
+        res.status(200).end()
     }
-
-    board = ["","","","","","","","",""]
-    res.status(200).end()
 })
 
 app.post('/clicked', (req, res) => {
