@@ -4,6 +4,7 @@ let started = false, myTurn = false, time = 20, icon
 if (userId == 1) icon = 'X'
 else if (userId == 2) icon = 'O'
 
+
 setInterval(async() => {
     getUsers()
     started ? '' : isStarted()
@@ -34,25 +35,23 @@ async function placeBoard() {
         const users = await (await fetch('/users')).json()
         let mainBoard = await (await fetch('/board')).json()
         
-        const me = users.find(user => user?.userId == userId)
-        const friend = users.find(user => user?.userId != userId)
-
-        if (icon && me.score === 3) {
-            alert('You are winner')
-            const ended = await fetch('/ended')
-            
-            window.location = '/'
-        } else if (icon && friend.score === 3) {
-            alert('You are loser')
-            const ended = await fetch('/ended')
-            
-            window.location = '/'
-        } else if (users[0].score === 3 || users[1].score === 3) {
-            alert('Game ended')
-            window.location = '/'
-        }
-        
         if (icon) {
+            const me = users.find(user => user.userId == userId)
+            const friend = users.find(user => user.userId != userId)
+            
+            if (me.score === 3) {
+                alert('You are winner')
+                const ended = await fetch('/ended')
+                
+                window.location = '/'
+            } else if (friend.score === 3) {
+                alert('You are loser')
+                const ended = await fetch('/ended')
+                
+                window.location = '/'
+            }
+            
+            
             if (me.turn) {
                 myTurn = true
                 
@@ -107,6 +106,9 @@ async function placeBoard() {
                 }
             }
         } else {
+            if (users[0].score === 3) {alert('Game ended'); window.location = '/'}
+            else if (users[1].score === 3) {alert('Game ended'); window.location = '/'}
+
             board.innerHTML = `<h1 class="game--title">Turn: ${users[0].turn ? users[0].username : users[1].username}</h1>
             <h1 class="game--score">Score: ${users[0].username} = ${users[0].score} ${users[1].username} = ${users[1].score}</h1>
             <div class="game--container" id="cells"></div>`
@@ -120,102 +122,98 @@ async function placeBoard() {
 
 async function checkGame() {
     if (started) {
-        const mainBoard = await (await fetch('/board')).json()
-        const users = await (await fetch('/users')).json()
-
-        
-        if ((mainBoard[0] == 'X' && mainBoard[1] == 'X' && mainBoard[2] == 'X') || (mainBoard[3] == 'X' && mainBoard[4] == 'X' && mainBoard[5] == 'X') || (mainBoard[6] == 'X' && mainBoard[7] == 'X' && mainBoard[8] == 'X') || (mainBoard[0] == 'X' && mainBoard[3] == 'X' && mainBoard[6] == 'X') || (mainBoard[1] == 'X' && mainBoard[4] == 'X' && mainBoard[7] == 'X') || (mainBoard[2] == 'X' && mainBoard[5] == 'X' && mainBoard[8] == 'X') || (mainBoard[0] == 'X' && mainBoard[4] == 'X' && mainBoard[8] == 'X') || (mainBoard[2] == 'X' && mainBoard[4] == 'X' && mainBoard[6] == 'X')) {
-            if (icon === 'X') {
-                alert('You win')
-                
-                try {
-                    const test = await fetch('/status', {
-                        method:'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            "draw": false
-                        })
-                    })
+        if (icon) {
+            const mainBoard = await (await fetch('/board')).json()
+            
+            if ((mainBoard[0] == 'X' && mainBoard[1] == 'X' && mainBoard[2] == 'X') || (mainBoard[3] == 'X' && mainBoard[4] == 'X' && mainBoard[5] == 'X') || (mainBoard[6] == 'X' && mainBoard[7] == 'X' && mainBoard[8] == 'X') || (mainBoard[0] == 'X' && mainBoard[3] == 'X' && mainBoard[6] == 'X') || (mainBoard[1] == 'X' && mainBoard[4] == 'X' && mainBoard[7] == 'X') || (mainBoard[2] == 'X' && mainBoard[5] == 'X' && mainBoard[8] == 'X') || (mainBoard[0] == 'X' && mainBoard[4] == 'X' && mainBoard[8] == 'X') || (mainBoard[2] == 'X' && mainBoard[4] == 'X' && mainBoard[6] == 'X')) {
+                if (icon === 'X') {
+                    alert('You win')
                     
-                } catch (error) {
-                    console.log(error.message);
+                    try {
+                        const test = await fetch('/status', {
+                            method:'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                "draw": false
+                            })
+                        })
+                        
+                    } catch (error) {
+                        console.log(error.message);
+                    }
                 }
-            } 
-            else if (icon === 'O') alert('you lose')
-            else if (!icon) alert(`${users[0].username} win`)
-
-            
-        } else if ((mainBoard[0] == 'O' && mainBoard[1] == 'O' && mainBoard[2] == 'O') || (mainBoard[3] == 'O' && mainBoard[4] == 'O' && mainBoard[5] == 'O') || (mainBoard[6] == 'O' && mainBoard[7] == 'O' && mainBoard[8] == 'O') || (mainBoard[0] == 'O' && mainBoard[3] == 'O' && mainBoard[6] == 'O') || (mainBoard[1] == 'O' && mainBoard[4] == 'O' && mainBoard[7] == 'O') || (mainBoard[2] == 'O' && mainBoard[5] == 'O' && mainBoard[8] == 'O') || (mainBoard[0] == 'O' && mainBoard[4] == 'O' && mainBoard[8] == 'O') || (mainBoard[2] == 'O' && mainBoard[4] == 'O' && mainBoard[6] == 'O')) {
-            if (icon === 'O') {
-                alert('You win')
+                else alert('you lose')
                 
-                try {
-                    const test = await fetch('/status', {
-                        method:'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            "draw": false
-                        })
-                    })
+            } else if ((mainBoard[0] == 'O' && mainBoard[1] == 'O' && mainBoard[2] == 'O') || (mainBoard[3] == 'O' && mainBoard[4] == 'O' && mainBoard[5] == 'O') || (mainBoard[6] == 'O' && mainBoard[7] == 'O' && mainBoard[8] == 'O') || (mainBoard[0] == 'O' && mainBoard[3] == 'O' && mainBoard[6] == 'O') || (mainBoard[1] == 'O' && mainBoard[4] == 'O' && mainBoard[7] == 'O') || (mainBoard[2] == 'O' && mainBoard[5] == 'O' && mainBoard[8] == 'O') || (mainBoard[0] == 'O' && mainBoard[4] == 'O' && mainBoard[8] == 'O') || (mainBoard[2] == 'O' && mainBoard[4] == 'O' && mainBoard[6] == 'O')) {
+                if (icon === 'O') {
+                    alert('You win')
                     
-                } catch (error) {
-                    console.log(error.message);
+                    try {
+                        const test = await fetch('/status', {
+                            method:'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                "draw": false
+                            })
+                        })
+                        
+                    } catch (error) {
+                        console.log(error.message);
+                    }
                 }
-            }
-            else if (icon === 'X') alert('you lose')
-            else if (!icon) alert(`${users[1].username} win`)
-            
-        } else {
-            let check = mainBoard.filter(el => el)
-            
-            if (check.length === 9) {
-                alert('Draw')
+                else alert('you lose')
                 
-                try {
-                    const test = await fetch('/status', {
-                        method:'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            "draw": true
-                        })
-                    })
+            } else {
+                let check = mainBoard.filter(el => el)
+                
+                if (check.length === 9) {
+                    alert('Draw')
                     
-                } catch (error) {
-                    console.log(error.message);
+                    try {
+                        const test = await fetch('/status', {
+                            method:'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                "draw": true
+                            })
+                        })
+                        
+                    } catch (error) {
+                        console.log(error.message);
+                    }
                 }
             }
         }
-        
     }
-    
-    
 }
 
 async function checkTime() {
-    if (myTurn) {
-        boardTime.textContent = 'Time: ' + --time
-        
-        if (time == '0') {
-            time = 20
+    if (icon) {
+        if (myTurn) {
+            boardTime.textContent = 'Time: ' + --time
             
-            try {
-                let test = await fetch('/timeEnded', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        "status": 200
+            if (time == '0') {
+                time = 20
+                
+                try {
+                    let test = await fetch('/timeEnded', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            "status": 200
+                        })
                     })
-                })
-            } catch (error) {
-                console.log(error.message);
+                } catch (error) {
+                    console.log(error.message);
+                }
             }
         }
     }
